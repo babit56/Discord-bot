@@ -1,9 +1,11 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { token } = require('./config.json');
+import { token } from './config.json';
+import { parse } from "discord-command-parser";
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
+const commandPrefix = "-"
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands')
     .filter(file => file.endsWith('.js'));
@@ -26,7 +28,7 @@ for (const file of eventFiles) {
     }
 }
 
-// Main interaction event
+// Main interaction event for slash commands
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
@@ -38,10 +40,26 @@ client.on('interactionCreate', async interaction => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        // eslint-disable-next-line max-len
         return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });
+
+// Main interaction even for text commands
+client.on('messageCreate', async message => {
+    const parsed = parse(message.content, commandPrefix, {allowSpaceBeforeCommand: true});
+    if (!parsed.success) return;
+
+    const command = client.commands.get(parsed.command);
+
+    if (!command) return;
+
+    try {
+        await command.execute(parsed);
+    } catch (error) {
+        console.error(error);
+        return message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+    }
+})
 
 // Bot is initalized and ready
 client.once('ready', () => {
