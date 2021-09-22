@@ -16,6 +16,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 
 (async () => {
     try {
+        // Remove guildId argument to deploy commands globally
         await rest.put(
             Routes.applicationGuildCommands(clientId, guildId),
             { body: commands }
