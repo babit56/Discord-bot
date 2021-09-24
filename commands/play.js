@@ -1,11 +1,41 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { joinVoiceChannel } = require('@discordjs/voice');
+const ytdl = require('ytdl-core');
+const ytsr = require('ytsr');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('play')
         .setDescription('Play inputted song or resume playing')
-        .addStringOption(option => option.setName('input').setDescription('url or song name')),
+        .addStringOption(option => option.setName('input').setDescription('URL or song name').setRequired(false)),
     async execute(interaction) {
-        // wæ find song and connect and play weee
+        if (!interaction.member.voice.channel) {
+            return void interaction.reply({
+                content: 'You are not in a voice channel!',
+                ephermal: 'True'
+            });
+        }
+        if (interaction.guild.me.voice.channelId &&
+            (interaction.guild.me.voice.channelId !== interaction.member.voice.channelId)) {
+            return void interaction.reply({
+                content: `I'm already in ${interaction.guild.me.voice.channel}!`,
+                ephermal: true});
+        }
+        if (!interaction.guild.me.voice.channel) {
+            await joinVoiceChannel({
+                channelId: interaction.member.voice.channelId,
+                guildId: interaction.guildId,
+                adapterCreator: interaction.guild.voiceAdapterCreator
+            });
+        }
+        await interaction.deferReply();
+        await interaction.editReply(`Joined ${interaction.guild.me.voice.channel}`);
+        // const input = interaction.options.getString('input');
+        // if (!input && 'queue not empty') 'play'
+        // let videoURL = input;
+        // if (!ytdl.validateURL(input)) {
+        //     videoURL = ytsr(input)
+        // }
+        
     }
 };

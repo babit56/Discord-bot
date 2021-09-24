@@ -1,16 +1,15 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-import { token } from './config.json';
-import { parse } from "discord-command-parser";
+const { token, prefix } = require('./config.json');
+const { getVoiceConnection } = require('@discordjs/voice');
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({
+    intents: [Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS]
+});
 
-const commandPrefix = "-"
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands')
-    .filter(file => file.endsWith('.js'));
-const eventFiles = fs.readdirSync('./events')
-    .filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
 // Register commands
 for (const file of commandFiles) {
@@ -46,24 +45,37 @@ client.on('interactionCreate', async interaction => {
 
 // Main interaction even for text commands
 client.on('messageCreate', async message => {
-    const parsed = parse(message.content, commandPrefix, {allowSpaceBeforeCommand: true});
-    if (!parsed.success) return;
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const command = client.commands.get(parsed.command);
-
-    if (!command) return;
-
-    try {
-        await command.execute(parsed);
-    } catch (error) {
-        console.error(error);
-        return message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const inputCommand = args.shift().toLowerCase();
+    
+    if (inputCommand === "disconnect") {
+        getVoiceConnection(message.guildId)?.destroy()
     }
+    if (inputCommand === "voice") {
+        message.reply({content: 
+            `I'm in voice channel ${message.guild.me.voice.channel}, id: ${message.guild.me.voice.channelId}`})
+    }
+    // const command = client.commands.get(inputCommand);
+
+    // if (!command) return;
+
+    // try {
+    //     await command.execute(args);
+    // } catch (error) {
+    //     console.error(error);
+    //     return message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+    // }
 })
 
 // Bot is initalized and ready
 client.once('ready', () => {
     console.log('Ready!');
 });
+
+client.on('error', () => {
+    console.log('fuck');
+})
 
 client.login(token);
