@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioResource, StreamType } = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 const ytsr = require('ytsr');
 
@@ -12,7 +12,7 @@ module.exports = {
         if (!interaction.member.voice.channel) {
             return void interaction.reply({
                 content: 'You are not in a voice channel!',
-                ephermal: 'True'
+                ephermal: true
             });
         }
         if (interaction.guild.me.voice.channelId &&
@@ -22,13 +22,21 @@ module.exports = {
                 ephermal: true});
         }
         if (!interaction.guild.me.voice.channel) {
-            await joinVoiceChannel({
+            joinVoiceChannel({
                 channelId: interaction.member.voice.channelId,
                 guildId: interaction.guildId,
                 adapterCreator: interaction.guild.voiceAdapterCreator
             });
         }
         await interaction.deferReply();
+        // if (!interaction.options.getString('input').trim()) {
+        //     // play from queue
+        // }
+        // if (ytdl.validateURL(interaction.options.getString('input'))) {
+        //     const stream = ytdl(interaction.options.getString('input'), {filter: 'audioonly'});
+        //     const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
+
+        // }
         await interaction.editReply(`Joined ${interaction.guild.me.voice.channel}`);
         // const input = interaction.options.getString('input');
         // if (!input && 'queue not empty') 'play'

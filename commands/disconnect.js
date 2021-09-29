@@ -6,7 +6,9 @@ module.exports = {
         .setName("disconnect")
         .setDescription("Disconnects bot from call"),
     async execute(interaction) {
-        if (!interaction.guild.me.voice.channel) return;
+        if (!interaction.guild.me.voice.channel) {
+            await interaction.reply({content: "Already disconnected!"})
+        }
         await interaction.reply({content: "Disconnecting!"});
         getVoiceConnection(interaction.guildId)?.destroy();
     }

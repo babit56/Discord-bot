@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token, prefix } = require('./config.json');
 const { getVoiceConnection } = require('@discordjs/voice');
+//const { VoiceManager } = require('./Queue');
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS]
@@ -10,6 +11,7 @@ const client = new Client({
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+//const manager = new VoiceManager()
 
 // Register commands
 for (const file of commandFiles) {
