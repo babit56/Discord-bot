@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const ytdl = require("ytdl-core");
+// const ytdl = require("ytdl-core");
 
 module.exports = {
     data: new SlashCommandBuilder()
