@@ -32,7 +32,7 @@ export class Queue {
     }
 
     remove(song) {
-        //TODO: search and remove?
+        //TODO: remove song from queue
     }
 
     next() {
@@ -61,10 +61,11 @@ export class Voice {
         if (!this.connection) {
             this.join()
         }
-        //TODO: this.queue.play(song);
+        // TODO: play first song in queue
+        // this.queue.play(song);
     }
 
-    // TODO: Improve connection maybe (add try catch for errors)
+    // TODO: Add error handling for joining vc
     join(voice=undefined) {
         this.id = voice?.id ?? this.id;
         this.connection = joinVoiceChannel({
@@ -95,10 +96,11 @@ export class Voice {
         this.connection.destroy();
     }
 
+    // TODO: Is there ever a time queue should be cleaned up?
     destroy() {
         this.leave();
-        this.player.stop();
-        //TODO: this.queue.clear()
+        // Unnecessary since NoSubscriberBehavior automatically stops player
+        // this.player.stop();
     }
 
     get volume() {
@@ -122,6 +124,7 @@ export class Voice {
 export class VoiceManager {
     constructor() {
         this.collection = new Collection;
+        // TODO: Add queue database
     }
 
     /**
@@ -140,7 +143,7 @@ export class VoiceManager {
         return voice;
     }
 
-    // TODO: destroy voice connection and queue in here?
+    // TODO: Destroy voice connection (and queue?) here
     delete(id) {
         this.collection.delete(id);
     }

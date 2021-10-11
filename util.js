@@ -1,11 +1,9 @@
-// Uses ES6 exports, rest of project uses nodejs module style sooo :shrugs:
-
 /**
  * Check if the string is an URL
  * @param {string} input input
  * @returns {boolean}
  */
-export function isURL(input) {
+module.exports.isURL =  function (input) {
     if (typeof input !== "string" || input.includes(" ")) return false;
     try {
         const url = new URL(input);
@@ -22,7 +20,7 @@ export function isURL(input) {
  * @param {Client} client The bot
  * @returns {User|undefined} Returns the user or undefined if no user is found
  */
-export function getUserFromMention(mention, client) {
+module.exports.getUserFromMention = function (mention, client) {
     // The id is the first and only match found by the RegEx.
     const matches = mention.match(/^<@!?(\d+)>$/);
 
@@ -41,6 +39,6 @@ export function getUserFromMention(mention, client) {
  * @param {string} string String to capitalize
  * @returns Capitalized string
  */
-export function capitalizeFirstLetter([first, ...rest]) {
+module.exports.capitalizeFirstLetter = function ([first, ...rest]) {
     return first.toUpperCase() + rest.join('');
 }
