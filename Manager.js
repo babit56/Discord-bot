@@ -32,7 +32,7 @@ export class Queue {
     }
 
     remove(song) {
-        //TODO: search and remove?
+        //TODO: @babit56 search and remove?
     }
 
     next() {
@@ -61,10 +61,10 @@ export class Voice {
         if (!this.connection) {
             this.join()
         }
-        //TODO: this.queue.play(song);
+        //TODO: @babit56 this.queue.play(song);
     }
 
-    // TODO: Improve connection maybe (add try catch for errors)
+    // TODO: @babit56 Improve connection maybe (add try catch for errors)
     join(voice=undefined) {
         this.id = voice?.id ?? this.id;
         this.connection = joinVoiceChannel({
@@ -98,7 +98,7 @@ export class Voice {
     destroy() {
         this.leave();
         this.player.stop();
-        //TODO: this.queue.clear()
+        //TODO: @babit56 this.queue.clear()
     }
 
     get volume() {
@@ -140,7 +140,7 @@ export class VoiceManager {
         return voice;
     }
 
-    // TODO: destroy voice connection and queue in here?
+    // TODO: @babit56 destroy voice connection and queue in here?
     delete(id) {
         this.collection.delete(id);
     }
