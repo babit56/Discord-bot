@@ -7,6 +7,8 @@ Very basic very homemade discord bot, just for fun.
 - [Fun times](#fun-times)
   - [Oooooh look a subsection](#oooooh-look-a-subsection)
     - [A subsubsection 🤭](#a-subsubsection-)
+      - [Another one](#another-one)
+        - [And another one](#and-another-one)
 - [Inspiration](#inspiration)
 
 ## Fun times
@@ -20,6 +22,14 @@ Isn't this cool 😊
 #### A subsubsection 🤭
 
 Does it look cool?
+
+##### Another one
+
+Level 5
+
+###### And another one
+
+Level 6
 
 ## Inspiration
 
