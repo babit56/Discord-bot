@@ -4,12 +4,11 @@ Very basic very homemade discord bot, just for fun.
 
 ## Table of contents
 
-- [Discord-bot](#discord-bot)
-  - [Table of contents](#table-of-contents)
-  - [Fun times](#fun-times)
-    - [Oooooh look a subsection](#oooooh-look-a-subsection)
-      - [A subsubsection 🤭](#a-subsubsection-)
-  - [Inspiration](#inspiration)
+- [Table of contents](#table-of-contents)
+- [Fun times](#fun-times)
+  - [Oooooh look a subsection](#oooooh-look-a-subsection)
+    - [A subsubsection 🤭](#a-subsubsection-)
+- [Inspiration](#inspiration)
 
 ## Fun times
 
