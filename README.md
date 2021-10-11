@@ -2,9 +2,8 @@
 
 Very basic very homemade discord bot, just for fun.
 
-## Table of contents
+## Table of contents <!-- omit in toc -->
 
-- [Table of contents](#table-of-contents)
 - [Fun times](#fun-times)
   - [Oooooh look a subsection](#oooooh-look-a-subsection)
     - [A subsubsection 🤭](#a-subsubsection-)
