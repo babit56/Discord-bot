@@ -1,11 +1,50 @@
-import { createAudioPlayer, entersState, joinVoiceChannel, NoSubscriberBehavior, VoiceConnectionStatus } from "@discordjs/voice";
+import {
+    createAudioPlayer, 
+    entersState, 
+    joinVoiceChannel, 
+    NoSubscriberBehavior, 
+    VoiceConnectionStatus
+} from "@discordjs/voice";
 
 const { Collection } = require("discord.js");
 
+export class Queue {
+    constructor(voice) {
+        this.voice = voice;
+        this.songs = [];
+        this.prevSongs = [];
+    }
+
+    add(song, position=undefined) {
+        if (position >= 1) {
+            position = Math.floor(position)
+            //const queueLen = this.songs.length + this.prevSongs.length;
+            if (position <= this.prevSongs.length) {
+                this.prevSongs.splice(position - 1, 0, song);
+                return song;
+            }
+            position -= this.prevSongs.length;
+            this.songs.splice(position - 1, 0, song);
+            return song;
+        }
+        this.songs.push(song);
+        return song;
+    }
+
+    remove(song) {
+        //TODO: search and remove?
+    }
+
+    next() {
+        const prevSong = this.songs.shift();
+        this.prevSongs.push(prevSong);
+    }
+}
+
 export class Voice {
-    constructor(voiceManager, voice, queue) {
+    constructor(voiceManager, voice, queue=undefined) {
         this.voices = voiceManager;
-        this.queue = queue;
+        this.queue = queue ?? new Queue(this)
         this.id = voice.id;
         this.guildId = voice.guildId;
         this.adapterCreator = voice.guild.voiceAdapterCreator;
@@ -57,9 +96,23 @@ export class Voice {
     }
 
     destroy() {
-        this.leave()
-        this.player.stop()
+        this.leave();
+        this.player.stop();
         //TODO: this.queue.clear()
+    }
+
+    get volume() {
+        return this._volume * 100;
+    }
+
+    set volume(volume) {
+        if (typeof volume !== "number" || isNaN(volume)) {
+            //throw error?
+        }
+        volume < 0 ? volume : 0;
+
+        this._volume = volume / 100;
+        // set volume for stream
     }
 }
 
@@ -68,7 +121,7 @@ export class Voice {
  */
 export class VoiceManager {
     constructor() {
-        this.voiceCollection = new Collection;
+        this.collection = new Collection;
     }
 
     /**
@@ -78,13 +131,13 @@ export class VoiceManager {
      * @param {Queue} queue Queue (class) for this guild
      * @returns 
      */
-    add(id, voice, queue) {
+    add(id, voice) {
         const existing = this.get(id);
         if (existing) {
             return existing;
         }
-        this.collection.set(id, [voice, queue]);
-        return [voice, queue];
+        this.collection.set(id, voice);
+        return voice;
     }
 
     // TODO: destroy voice connection and queue in here?
