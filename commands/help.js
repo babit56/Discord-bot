@@ -22,5 +22,6 @@ module.exports = {
             .addChoices(commands)),
     async execute(interaction) {
         interaction.reply({content: "Yooooo", ephermal: true})
+        // TODO: Add help/docs/wiki to grab info from
     }
 }

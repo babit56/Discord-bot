@@ -29,6 +29,8 @@ module.exports = {
             });
         }
         await interaction.deferReply();
+        // TODO: Add song to queue and play (finish VoiceManager first)
+
         // if (!interaction.options.getString('input').trim()) {
         //     // play from queue
         // }
