@@ -8,7 +8,8 @@ module.exports = {
         .setName('play')
         .setDescription('Play inputted song or resume playing')
         .addStringOption(option => option.setName('input').setDescription('URL or song name').setRequired(false)),
-    async execute(interaction) {
+    async execute(voiceManager, interaction) {
+        // Move joining to join command?
         if (!interaction.member.voice.channel) {
             return void interaction.reply({
                 content: 'You are not in a voice channel!',

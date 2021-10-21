@@ -5,6 +5,7 @@ import {
     NoSubscriberBehavior, 
     VoiceConnectionStatus
 } from "@discordjs/voice";
+import { setTimeout } from 'timers/promises';
 
 const { Collection } = require("discord.js");
 
@@ -39,11 +40,16 @@ export class Queue {
         const prevSong = this.songs.shift();
         this.prevSongs.push(prevSong);
     }
+
+    clear() {
+        this.songs = [];
+        this.prevSongs = [];
+    }
 }
 
 export class Voice {
     constructor(voiceManager, voice, queue=undefined) {
-        this.voices = voiceManager;
+        this.voiceManager = voiceManager;
         this.queue = queue ?? new Queue(this)
         this.id = voice.id;
         this.guildId = voice.guildId;
@@ -55,6 +61,7 @@ export class Voice {
         });
         this.connection = this.join();
         this._volume = 0.5;
+        this.ac = new AbortController();
     }
 
     play(song) {
@@ -62,11 +69,12 @@ export class Voice {
             this.join()
         }
         // TODO: play first song in queue
-        // this.queue.play(song);
+        // this.queue.next(song);
     }
 
     // TODO: Add error handling for joining vc
     join(voice=undefined) {
+        this.ac.abort();
         this.id = voice?.id ?? this.id;
         this.connection = joinVoiceChannel({
             channelId: this.id,
@@ -93,14 +101,27 @@ export class Voice {
     }
 
     leave() {
+        if (!this.connection) return;
         this.connection.destroy();
+        this.startAFK(15 * 60);
     }
 
-    // TODO: Is there ever a time queue should be cleaned up?
     destroy() {
+        this.queue.clear()
         this.leave();
-        // Unnecessary since NoSubscriberBehavior automatically stops player
-        // this.player.stop();
+    }
+
+    startAFK(seconds) {
+        const signal = this.ac.signal;
+        setTimeout(seconds * 1000, null, {signal})
+            .then(() => {
+                this.voiceManager.delete(this.id);
+            })
+            .catch((err) => {
+                if (err.name === "AbortError") {
+                    console.log("Scheduled disconnect aborted");
+                } else console.error(err);
+            });
     }
 
     get volume() {
@@ -124,7 +145,6 @@ export class Voice {
 export class VoiceManager {
     constructor() {
         this.collection = new Collection;
-        // TODO: Add queue database
     }
 
     /**
@@ -134,18 +154,21 @@ export class VoiceManager {
      * @param {Queue} queue Queue (class) for this guild
      * @returns 
      */
-    add(id, voice) {
-        const existing = this.get(id);
-        if (existing) {
-            return existing;
-        }
-        this.collection.set(id, voice);
+    add(voice, queue=undefined) {
+        const existing = this.get(voice.id);
+        if (existing) return existing;
+
+        // TODO: Get saved queue here
+
+        const voiceInstance = new Voice(this, voice, queue);
+        this.collection.set(voice.id, voiceInstance);
         return voice;
     }
 
-    // TODO: Destroy voice connection (and queue?) here
     delete(id) {
+        const voice = this.get(id);
         this.collection.delete(id);
+        voice.destroy()
     }
 
     get(id) {

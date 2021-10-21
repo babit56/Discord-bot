@@ -20,7 +20,7 @@ module.exports = {
             .setDescription("The command to learn about")
             .setRequired(true)
             .addChoices(commands)),
-    async execute(interaction) {
+    async execute(voiceManager, interaction) {
         interaction.reply({content: "Yooooo", ephermal: true})
         // TODO: Add help/docs/wiki to grab info from
     }

@@ -6,7 +6,7 @@ module.exports = {
         .setName('join')
         .setDescription(`Joins your voice channel. 
             Won't work f I'm already in a vc. Administrator permissions overrides this`),
-    execute(interaction) {
+    execute(voiceManager, interaction) {
         // TODO: Join vc
         console.log("Join vc plz");
         console.log(interaction);

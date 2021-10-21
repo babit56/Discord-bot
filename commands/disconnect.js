@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("disconnect")
         .setDescription("Disconnects bot from call"),
-    async execute(interaction) {
+    async execute(voiceManager, interaction) {
         if (!interaction.guild.me.voice.channel) {
             await interaction.reply({content: "Already disconnected!"})
         }

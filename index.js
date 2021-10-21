@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token, prefix } = require('./config.json');
 const { getVoiceConnection } = require('@discordjs/voice');
-//const { VoiceManager } = require('./Queue');
+const { VoiceManager } = require('./Manager.js');
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS]
@@ -11,7 +11,7 @@ const client = new Client({
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
-//const manager = new VoiceManager()
+const voiceManager = new VoiceManager();
 
 // Register commands
 for (const file of commandFiles) {
@@ -23,9 +23,9 @@ for (const file of commandFiles) {
 for (const file of eventFiles) {
     const event = require(`./events/${file}`);
     if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args));
+        client.once(event.name, (...args) => event.execute(voiceManager, ...args));
     } else {
-        client.on(event.name, (...args) => event.execute(...args));
+        client.on(event.name, (...args) => event.execute(voiceManager, ...args));
     }
 }
 
@@ -38,7 +38,7 @@ client.on('interactionCreate', async interaction => {
     if (!command) return;
 
     try {
-        await command.execute(interaction);
+        await command.execute(voiceManager, interaction);
     } catch (error) {
         console.error(error);
         return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
