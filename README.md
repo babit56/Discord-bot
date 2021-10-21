@@ -4,32 +4,24 @@ Very basic very homemade discord bot, just for fun.
 
 ## Table of contents <!-- omit in toc -->
 
-- [Fun times](#fun-times)
-  - [Oooooh look a subsection](#oooooh-look-a-subsection)
-    - [A subsubsection 🤭](#a-subsubsection-)
-      - [Another one](#another-one)
-        - [And another one](#and-another-one)
+- [Task list](#task-list)
+  - [Other tasks](#other-tasks)
 - [Inspiration](#inspiration)
 
-## Fun times
+## Task list
 
-This is supposed to be a private repository so if you're seeing this then I must've forgot to change this :^)
+- [x] Add joining and leaving vc
+- [x] Add a voice manager
+- [ ] Add queue system
+- [ ] Add actual playing of songs lmao
+- [ ] Add clear feedback for each (text) command (embeds anyone?)
 
-### Oooooh look a subsection
+### Other tasks
 
-Isn't this cool 😊
-
-#### A subsubsection 🤭
-
-Does it look cool? I hope so, sure do
-
-##### Another one
-
-Level 5
-
-###### And another one
-
-Level 6
+- [ ] Add queue database to save queues
+- [ ] Implement possibility to add playlists
+- [ ] Create docs and /help command
+- [ ] Add info command for fun, for various things
 
 ## Inspiration
 
@@ -37,3 +29,5 @@ Code inspired by:
 
 - [Disord.js guide](https://discordjs.guide)
 - [Distube](https://github.com/skick1234/DisTube.git)
+
+[Jump to top](#discord-bot)
