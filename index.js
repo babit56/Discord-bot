@@ -1,8 +1,16 @@
+console.log(process.version);
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { token, prefix } = require('./config.json');
+const token = (() => {
+    try {
+        return { token } = require('./config.json');
+    } catch(err) {
+        return process.env['TOKEN'];
+    }
+})();
 const { getVoiceConnection } = require('@discordjs/voice');
 const VoiceManager = require('./Manager');
+const prefix = "-";
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS]
