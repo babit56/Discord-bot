@@ -4,8 +4,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('join')
-        .setDescription(`Joins your voice channel. 
-            Won't work f I'm already in a vc. Administrator permissions overrides this`),
+        .setDescription(`Joins your voice channel.`),
     execute(voiceManager, interaction) {
         // TODO: Join vc
         console.log("Join vc plz");

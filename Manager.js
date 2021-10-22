@@ -1,56 +1,59 @@
-import {
+const {
     createAudioPlayer, 
     entersState, 
     joinVoiceChannel, 
     NoSubscriberBehavior, 
     VoiceConnectionStatus
-} from "@discordjs/voice";
-import { setTimeout } from 'timers/promises';
-
+} = require("@discordjs/voice");
+const { setTimeout } = require('timers/promises');
 const { Collection } = require("discord.js");
 
-export class Queue {
-    constructor(voice) {
-        this.voice = voice;
-        this.songs = [];
-        this.prevSongs = [];
+/**
+ * Manages both voices and queues, by assuming one queue exists for every voice
+ */
+class VoiceManager {
+    constructor() {
+        this.collection = new Collection;
     }
 
-    add(song, position=undefined) {
-        if (position >= 1) {
-            position = Math.floor(position)
-            //const queueLen = this.songs.length + this.prevSongs.length;
-            if (position <= this.prevSongs.length) {
-                this.prevSongs.splice(position - 1, 0, song);
-                return song;
-            }
-            position -= this.prevSongs.length;
-            this.songs.splice(position - 1, 0, song);
-            return song;
-        }
-        this.songs.push(song);
-        return song;
+    /**
+     * Adds a new voice connection to collection
+     * @param {string} id Guild id of the voice
+     * @param {Voice} voice Voice (class) for this guild
+     * @param {Queue} queue Queue (class) for this guild
+     * @returns 
+     */
+    add(voice, queue=undefined) {
+        const existing = this.get(voice.id);
+        if (existing) return existing;
+
+        // TODO: Get saved queue here
+
+        const voiceInstance = new Voice(this, voice, queue);
+        this.collection.set(voice.id, voiceInstance);
+        return voice;
     }
 
-    remove(song) {
-        //TODO: remove song from queue
+    delete(id) {
+        const voice = this.get(id);
+        this.collection.delete(id);
+        voice.destroy()
     }
 
-    next() {
-        const prevSong = this.songs.shift();
-        this.prevSongs.push(prevSong);
+    get(id) {
+        return this.collection.get(id);
     }
 
-    clear() {
-        this.songs = [];
-        this.prevSongs = [];
+    has(id) {
+        return this.collection.has(id);
     }
 }
 
-export class Voice {
+
+class Voice {
     constructor(voiceManager, voice, queue=undefined) {
         this.voiceManager = voiceManager;
-        this.queue = queue ?? new Queue(this)
+        this.queue = queue ?? new Queue(this);
         this.id = voice.id;
         this.guildId = voice.guildId;
         this.adapterCreator = voice.guild.voiceAdapterCreator;
@@ -139,43 +142,42 @@ export class Voice {
     }
 }
 
-/**
- * Manages both voices and queues, by assuming one queue exists for every voice
- */
-export class VoiceManager {
-    constructor() {
-        this.collection = new Collection;
+class Queue {
+    constructor(voice) {
+        this.voice = voice;
+        this.songs = [];
+        this.prevSongs = [];
     }
 
-    /**
-     * Adds a new voice connection to collection
-     * @param {string} id Guild id of the voice
-     * @param {Voice} voice Voice (class) for this guild
-     * @param {Queue} queue Queue (class) for this guild
-     * @returns 
-     */
-    add(voice, queue=undefined) {
-        const existing = this.get(voice.id);
-        if (existing) return existing;
-
-        // TODO: Get saved queue here
-
-        const voiceInstance = new Voice(this, voice, queue);
-        this.collection.set(voice.id, voiceInstance);
-        return voice;
+    add(song, position=undefined) {
+        if (position >= 1) {
+            position = Math.floor(position)
+            //const queueLen = this.songs.length + this.prevSongs.length;
+            if (position <= this.prevSongs.length) {
+                this.prevSongs.splice(position - 1, 0, song);
+                return song;
+            }
+            position -= this.prevSongs.length;
+            this.songs.splice(position - 1, 0, song);
+            return song;
+        }
+        this.songs.push(song);
+        return song;
     }
 
-    delete(id) {
-        const voice = this.get(id);
-        this.collection.delete(id);
-        voice.destroy()
+    remove(song) {
+        //TODO: remove song from queue
     }
 
-    get(id) {
-        return this.collection.get(id);
+    next() {
+        const prevSong = this.songs.shift();
+        this.prevSongs.push(prevSong);
     }
 
-    has(id) {
-        return this.collection.has(id);
+    clear() {
+        this.songs = [];
+        this.prevSongs = [];
     }
 }
+
+module.exports = VoiceManager;

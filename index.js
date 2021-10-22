@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token, prefix } = require('./config.json');
 const { getVoiceConnection } = require('@discordjs/voice');
-const { VoiceManager } = require('./Manager.js');
+const VoiceManager = require('./Manager');
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS]
